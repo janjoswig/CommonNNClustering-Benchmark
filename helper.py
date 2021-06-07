@@ -1,7 +1,44 @@
+import json
+
 import numpy as np
 from sklearn import datasets
 from sklearn.neighbors import KDTree
 from sklearn.preprocessing import StandardScaler
+
+from cnnclustering import cluster
+
+
+class RecordEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, cluster.Record):
+            return {
+                "_type": "Record",
+                "n_points": obj.n_points,
+                "radius_cutoff": obj.radius_cutoff,
+                "cnn_cutoff": obj.cnn_cutoff,
+                "member_cutoff": obj.member_cutoff,
+                "max_clusters": obj.max_clusters,
+                "n_clusters": obj.n_clusters,
+                "ratio_largest": obj.ratio_largest,
+                "ratio_noise": obj.ratio_noise,
+                "execution_time": obj.execution_time,
+                }
+        return super().default(self, obj)
+
+
+def as_Record(obj):
+    try:
+        _type = obj.pop('_type')
+    except KeyError:
+        _type = None
+
+    if _type is None:
+        return obj
+
+    if _type == 'Record':
+        return cluster.Record(*obj.values())
+
+    return obj
 
 
 def compute_neighbours(data, radius, sort=False):
