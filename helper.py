@@ -241,10 +241,6 @@ def plot_timings(
             std = std[sorti]
 
     default_plot_props = {
-        "linestyle": "--",
-        "marker": "o",
-        "markersize": 5,
-        "markeredgecolor": "k"
         }
 
     if plot_props is not None:
