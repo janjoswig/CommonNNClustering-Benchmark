@@ -1,10 +1,12 @@
 import json
 from operator import itemgetter
+import pathlib
 
 from IPython.core.magics.execution import TimeitResult
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.optimize import curve_fit
 from sklearn import datasets
 from sklearn.neighbors import KDTree
 from sklearn.preprocessing import StandardScaler
@@ -82,7 +84,42 @@ def combine_timeit_results(*results):
         )
 
 
+def save_records(clusterings, record_file, scan_ids=None, overwrite=False):
+    record_file = pathlib.Path(record_file)
+    record_file.parent.mkdir(exist_ok=True, parents=True)
+
+    if not isinstance(clusterings, list):
+        clusterings = [clusterings]
+
+    if scan_ids is None:
+        scan_ids = record_file.stem
+
+    if not isinstance(scan_ids, list):
+        scan_ids = [scan_ids]
+
+    assert len(scan_ids) == len(clusterings)
+
+    if record_file.is_file() and not overwrite:
+        raise RuntimeError("File exists: str(record_file)")
+
+    with open(record_file, "w") as fp:
+        json.dump(
+            {
+                i: c.summary._list
+                for i, c in zip(scan_ids, clusterings)
+            },
+            fp, cls=RecordEncoder, indent=4
+            )
+
+
+def load_records(record_file):
+    with open(record_file, "r") as fp:
+        record_dict = json.load(fp, object_hook=as_Record)
+    return {k: cluster.Summary(v) for k, v in record_dict.items()}
+
+
 def save_report(timings, report_file, overwrite=False):
+    report_file = pathlib.Path(report_file)
     report_file.parent.mkdir(exist_ok=True, parents=True)
 
     if report_file.is_file() and not overwrite:
@@ -347,3 +384,22 @@ def gen_moons_points(size, random_state=8, **kwargs):
         **kwargs
         )
     return StandardScaler().fit_transform(circles)
+
+
+def growth(n, a, b):
+    return a * n**b
+
+
+def growth_with_c(n, a, b, c):
+    return a * n**b + c
+
+
+def scale(x, y, newx, f=growth):
+
+    try:
+        popt, pcov = curve_fit(f, x, y, p0=(0.1, 1.5))
+        perr = np.sqrt(np.diag(pcov))
+    except RuntimeError as error:
+        print(error)
+    else:
+        return growth(newx, *popt), (popt, perr)
