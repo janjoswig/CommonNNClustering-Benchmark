@@ -14,6 +14,41 @@ from sklearn.preprocessing import StandardScaler
 from cnnclustering import cluster
 
 
+def indent_at_parens(s):
+    """Take a string and introduce indention at parentheses"""
+
+    o = ""
+    level = 1
+    saw_comma = False
+    for c in s:
+        if saw_comma:
+            if c == " ":
+                o += f"\n{'    ' * (level - 1)}"
+            else:
+                o += f"\n{'    ' * (level - 1)}{c}"
+            saw_comma = False
+            continue
+
+        if c == "(":
+            o += f"(\n{'    ' * level}"
+            level += 1
+            continue
+
+        if c == ")":
+            level -= 1
+            o += f"\n{'    ' * level})"
+            continue
+
+        if c == ",":
+            saw_comma = True
+            o += ","
+            continue
+
+        o += c
+
+    return o
+
+
 class TimeitResultEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, TimeitResult):
@@ -394,10 +429,10 @@ def growth_with_c(n, a, b, c):
     return a * n**b + c
 
 
-def scale(x, y, newx, f=growth):
+def scale(x, y, newx, f=growth, **kwargs):
 
     try:
-        popt, pcov = curve_fit(f, x, y, p0=(0.1, 1.5))
+        popt, pcov = curve_fit(f, x, y, **kwargs)
         perr = np.sqrt(np.diag(pcov))
     except RuntimeError as error:
         print(error)
