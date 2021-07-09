@@ -100,10 +100,16 @@ def save_report(timings, report_file, overwrite=False):
         json.dump(timings, f, indent=4, cls=TimeitResultEncoder)
 
 
-def load_report(report_file):
+def load_report(report_file, raw=False):
 
     with open(report_file) as f:
         timings = json.load(f, object_hook=as_TimeitResult)
+
+    if raw:
+        timings = {
+            k: raw_to_timeitresult(v)
+            for k, v in timings.items()
+            }
 
     return timings
 
