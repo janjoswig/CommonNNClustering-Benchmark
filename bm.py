@@ -25,7 +25,7 @@ run_list = [
             "gen_func": helper_base.gen_no_structure_points,
             "setup_func": cases.setup_commonnn_clustering__fit,
         },
-        cases.gen_run_argument_list,
+        cases.gen_run_argument_list_cnnclustering__fit,
         r=0.25, c=0, n_list=n_points_list,
         setup_kwargs={"recipe": cases.default_recipe}
     ),

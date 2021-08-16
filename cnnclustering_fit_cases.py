@@ -60,24 +60,27 @@ def setup_commonnn_clustering_complete(
         registered_recipe_key="None",
         preparation_hook=hooks.prepare_pass,
         recipe=None):
-    """Prepare benchmark of :meth:`cnnclustering.cluster.Clustering._fit` inkl. preparatiotransform_func"""
+    """Prepare benchmark of :meth:`cnnclustering.cluster.Clustering._fit`
+
+    Timings will include preparatiotransform_func
+    """
 
     if recipe is None:
         recipe = {}
 
+    if transform_func is None:
+        transform_func = lambda x: x
+
+    if transform_args is None:
+        transform_args = ()
+
+    if transform_kwargs is None:
+        transform_kwargs = {}
+
     def fit_complete(*args, **kwargs):
 
-        if transform_func is not None:
-            if transform_args is None:
-                transform_args = ()
-
-            if transform_kwargs is None:
-                transform_kwargs = {}
-
-            data = transform_func(data, *transform_args, **transform_kwargs)
-
         builder = cluster.ClusteringBuilder(
-            data,
+            transform_func(data, *transform_args, **transform_kwargs),
             preparation_hook=preparation_hook,
             registered_recipe_key=registered_recipe_key,
             **recipe
@@ -139,10 +142,14 @@ neighbours_sorted_recipe = {
 }
 
 
-def gen_run_argument_list(
+def gen_run_argument_list_cnnclustering__fit(
         r, c, n_list,
+        gen_kwargs=None,
         transform_args=None, transform_kwargs=None,
         setup_args=None, setup_kwargs=None):
+
+    if gen_kwargs is None:
+        gen_kwargs = {}
 
     if transform_args is None:
         transform_args = ()
@@ -162,7 +169,7 @@ def gen_run_argument_list(
             {
                 "id": str(n),
                 "gen": (
-                    ((n, 2),), {}
+                    ((n, 2),), gen_kwargs
                 ),
                 "transform": (
                     transform_args, transform_kwargs
@@ -172,6 +179,53 @@ def gen_run_argument_list(
                 ),
                 "timed": (
                     (_types.ClusterParameters(r, c),), {}
+                ),
+            }
+        )
+
+    return run_argument_list
+
+
+def gen_run_argument_list_cnnclustering_complete(
+        r, c, n_list,
+        gen_kwargs=None,
+        transform_args=None, transform_kwargs=None,
+        setup_args=None, setup_kwargs=None):
+
+    if gen_kwargs is None:
+        gen_kwargs = {}
+
+    if transform_args is None:
+        transform_args = ()
+
+    if transform_kwargs is None:
+        transform_kwargs = {}
+
+    if setup_args is None:
+        setup_args = ()
+
+    if setup_kwargs is None:
+        setup_kwargs = {}
+
+    run_argument_list = []
+    for n in n_list:
+        run_argument_list.append(
+            {
+                "id": str(n),
+                "gen": (
+                    ((n, 2),), gen_kwargs
+                ),
+                "transform": (
+                    transform_args, transform_kwargs
+                ),
+                "setup": (
+                    setup_args, setup_kwargs
+                ),
+                "timed": (
+                    (r, c), {
+                        "record": False, "record_time": False,
+                        "info": False, "sort_by_size": False
+                        }
                 ),
             }
         )
