@@ -16,7 +16,7 @@ if not report_dir.is_dir():
 RUN_ARGUMENTS_MAP = {}
 RUN_TIMINGS_MAP = {}
 
-n_points_list = [500 * 2**x for x in range(2)]
+n_points_list = [500 * 2**x for x in range(10)]
 
 run_list = [
     helper_base.Run(
@@ -40,7 +40,7 @@ run_list = [
             "setup_func": cases.setup_commonnn_clustering_complete,
         },
         cases.gen_run_argument_list_cnnclustering_complete,
-        r=0.18, c=20, n_list=n_points_list,  # [500 * 2**x for x in range(8)],
+        r=0.18, c=20, n_list=[500 * 2**x for x in range(8)],
         gen_kwargs={"random_state": 170, "cluster_std": [1.0, 2.5, 0.5]},
         setup_kwargs={"recipe": cases.distance_recipe},
     ),
