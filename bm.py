@@ -18,7 +18,7 @@ RUN_TIMINGS_MAP = {}
 
 n_points_list = [500 * 2**x for x in range(10)]
 
-run_list = [
+run_list = (
     helper_base.Run(
         "no_structure", "a_a",
         {
@@ -158,7 +158,7 @@ run_list = [
             "recipe": cases.neighbours_sorted_recipe
             },
     ),
-]
+)
 
 if __name__ == "__main__":
     for run in run_list:
