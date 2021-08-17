@@ -114,6 +114,7 @@ def load_records(record_file):
 
 
 def compute_neighbours(data, radius, sort=False):
+    """Transform function"""
 
     tree = KDTree(data)
     neighbourhoods = tree.query_radius(
@@ -192,6 +193,9 @@ def collect_timings(
         transform_func=None, timings=None, repeats=10):
     """Orchestrate timings
 
+    Note:
+        This has been superseeded by :func:`time_unit`.
+
     Args:
         gen_func: A function, returning data. Called with
             run arguments "gen".
@@ -248,14 +252,108 @@ def collect_timings(
     return timings
 
 
+def time_unit(bm_unit, repeats=10):
+    """Perform a single timing
+
+    Args:
+        bm_unit: A single instance of :obj:`BMUnit`
+
+    Keyword args:
+        repeat: How many time the timing should be repeated
+    """
+
+    if bm_unit.gen_func is not None:
+        data = bm_unit.gen_func(*bm_unit.gen_args, **bm_unit.gen_kwargs)
+    else:
+        data = None
+
+    if bm_unit.transform_func is not None:
+        data = bm_unit.transform_func(
+            data,
+            *bm_unit.transform_args, **bm_unit.transform_kwargs
+            )
+
+    assert bm_unit.setup_func is not None
+
+    timeit_results = []
+    for _ in range(repeats):
+        timed_func = bm_unit.setup_func(
+            data,
+            *bm_unit.setup_args, **bm_unit.setup_kwargs,
+            )
+
+        o = timeit.timeit(
+            "t(*args, **kwargs)",
+            number=1,
+            globals={
+                "t": timed_func,
+                "args": bm_unit.timed_args,
+                "kwargs": bm_unit.timed_kwargs
+                }
+            )
+
+        timeit_results.append(o)
+
+    return timeit_results
+
+
 class Run:
 
     def __init__(
             self,
-            run_name, case_name,
-            function_map, run_argument_list_gen,
-            **kwargs):
+            run_name,
+            bm_units=None):
         self.run_name = run_name
-        self.case_name = case_name
-        self.function_map = function_map
-        self.run_argument_list = run_argument_list_gen(**kwargs)
+        self.bm_units = bm_units
+        self.timings = {}
+
+    def collect(self, repeats=10):
+        assert self.bm_units is not None
+
+        for unit in self.bm_units:
+            self.timings[unit.id] = time_unit(
+                unit, repeats=repeats
+                )
+
+
+class BMUnit:
+
+    def __init__(
+            self, id,
+            gen_func=None, gen_args=None, gen_kwargs=None,
+            transform_func=None, transform_args=None, transform_kwargs=None,
+            setup_func=None, setup_args=None, setup_kwargs=None,
+            timed_args=None, timed_kwargs=None):
+
+        self.id = id
+
+        self.gen_func = gen_func
+        if gen_args is None:
+            gen_args = ()
+        self.gen_args = gen_args
+        if gen_kwargs is None:
+            gen_kwargs = {}
+        self.gen_kwargs = gen_kwargs
+
+        self.transform_func = transform_func
+        if transform_args is None:
+            transform_args = ()
+        self.transform_args = transform_args
+        if transform_kwargs is None:
+            transform_kwargs = {}
+        self.transform_kwargs = transform_kwargs
+
+        self.setup_func = setup_func
+        if setup_args is None:
+            setup_args = ()
+        self.setup_args = setup_args
+        if setup_kwargs is None:
+            setup_kwargs = {}
+        self.setup_kwargs = setup_kwargs
+
+        if timed_args is None:
+            timed_args = ()
+        self.timed_args = timed_args
+        if timed_kwargs is None:
+            timed_kwargs = {}
+        self.timed_kwargs = timed_kwargs

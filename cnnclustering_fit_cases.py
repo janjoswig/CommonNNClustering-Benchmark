@@ -3,6 +3,8 @@ import numpy as np
 from cnnclustering import cluster, hooks
 from cnnclustering import _fit, _types, _primitive_types
 
+import helper_base
+
 
 def setup_commonnn_clustering__fit(
         data,
@@ -142,48 +144,53 @@ neighbours_sorted_recipe = {
 }
 
 
-def gen_run_argument_list_cnnclustering__fit(
-        r, c, n_list,
-        gen_kwargs=None,
-        transform_args=None, transform_kwargs=None,
+def gen_bm_units_cnnclustering__fit(
+        r, c, d, n_list,
+        gen_func, gen_kwargs=None,
+        transform_func=None, transform_args=None, transform_kwargs=None,
         setup_args=None, setup_kwargs=None):
+    """Case generation function to vary data set size"""
 
-    if gen_kwargs is None:
-        gen_kwargs = {}
+    bm_units = (
+        helper_base.BMUnit(
+            id=str(n),
+            gen_func=gen_func, gen_args=((n, d),), gen_kwargs=gen_kwargs,
+            transform_func=transform_func, transform_args=transform_args,
+            transform_kwargs=transform_kwargs,
+            setup_func=setup_commonnn_clustering__fit,
+            setup_args=setup_args, setup_kwargs=setup_kwargs,
+            timed_args=(_types.ClusterParameters(r, c),), timed_kwargs={}
+            )
+        for n in n_list
+    )
 
-    if transform_args is None:
-        transform_args = ()
+    return bm_units
 
-    if transform_kwargs is None:
-        transform_kwargs = {}
 
-    if setup_args is None:
-        setup_args = ()
+def gen_bm_units_cnnclustering_complete(
+        r, c, d, n_list,
+        gen_func, gen_kwargs=None,
+        transform_func=None, transform_args=None, transform_kwargs=None,
+        setup_args=None, setup_kwargs=None):
+    """Case generation function to vary data set size"""
 
-    if setup_kwargs is None:
-        setup_kwargs = {}
+    bm_units = (
+        helper_base.BMUnit(
+            id=str(n),
+            gen_func=gen_func, gen_args=((n, d),), gen_kwargs=gen_kwargs,
+            transform_func=transform_func, transform_args=transform_args,
+            transform_kwargs=transform_kwargs,
+            setup_func=setup_commonnn_clustering_complete,
+            setup_args=setup_args, setup_kwargs=setup_kwargs,
+            timed_args=(r, c), timed_kwargs={
+                "record": False, "record_time": False,
+                "info": False, "sort_by_size": False
+                }
+            )
+        for n in n_list
+    )
 
-    run_argument_list = []
-    for n in n_list:
-        run_argument_list.append(
-            {
-                "id": str(n),
-                "gen": (
-                    ((n, 2),), gen_kwargs
-                ),
-                "transform": (
-                    transform_args, transform_kwargs
-                ),
-                "setup": (
-                    setup_args, setup_kwargs
-                ),
-                "timed": (
-                    (_types.ClusterParameters(r, c),), {}
-                ),
-            }
-        )
-
-    return run_argument_list
+    return bm_units
 
 
 def gen_run_argument_list_cnnclustering_complete(

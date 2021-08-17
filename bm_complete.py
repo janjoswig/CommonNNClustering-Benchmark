@@ -13,12 +13,9 @@ report_dir = pathlib.Path("reports/curta/cnnclustering_fit/complete")
 if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
-RUN_ARGUMENTS_MAP = {}
-RUN_TIMINGS_MAP = {}
-
 n_points_list = [500 * 2**x for x in range(10)]
 
-run_list = (
+# run_list = (
     # helper_base.Run(
     #     "varied", "a_a",
     #     {
@@ -44,31 +41,31 @@ run_list = (
     #     gen_kwargs={"random_state": 170, "cluster_std": [1.0, 2.5, 0.5]},
     #     setup_kwargs={"recipe": cases.distance_recipe},
     # ),
-    (
-        helper_base.Run,
-        (
-            "varied", "c_a",
-            {
-                "gen_func": helper_base.gen_blobs_points,
-                "setup_func": cases.setup_commonnn_clustering_complete,
-            },
-            cases.gen_run_argument_list_cnnclustering_complete
-            ),
-        {
-            "r": 0.18, "c": 20,
-            "n_list": n_points_list,
-            "gen_kwargs": {
-                "random_state": 170,
-                "cluster_std": [1.0, 2.5, 0.5]
-                },
-            "setup_kwargs": {
-                "transform_func": helper_base.compute_neighbours,
-                "transform_args": (0.18,),
-                "preparation_hook": hooks.prepare_neighbourhoods,
-                "recipe": cases.neighbours_recipe
-                }
-            }
-        ),
+    # (
+    #     helper_base.Run,
+    #     (
+    #         "varied", "c_a",
+    #         {
+    #             "gen_func": helper_base.gen_blobs_points,
+    #             "setup_func": cases.setup_commonnn_clustering_complete,
+    #         },
+    #         cases.gen_run_argument_list_cnnclustering_complete
+    #         ),
+    #     {
+    #         "r": 0.18, "c": 20,
+    #         "n_list": n_points_list,
+    #         "gen_kwargs": {
+    #             "random_state": 170,
+    #             "cluster_std": [1.0, 2.5, 0.5]
+    #             },
+    #         "setup_kwargs": {
+    #             "transform_func": helper_base.compute_neighbours,
+    #             "transform_args": (0.18,),
+    #             "preparation_hook": hooks.prepare_neighbourhoods,
+    #             "recipe": cases.neighbours_recipe
+    #             }
+    #         }
+    #     ),
     # helper_base.Run(
     #     "varied", "d_a",
     #     {
@@ -87,22 +84,44 @@ run_list = (
     #         "recipe": cases.neighbours_sorted_recipe
     #         },
     # ),
+#)
+
+
+raw_run_list = [
+    (
+        "varied_c_a",
+        {
+            "r": 0.18, "c": 20, "d": 2,
+            "n_list": n_points_list,
+            "gen_func": helper_base.gen_blobs_points,
+            "gen_kwargs": {
+                "random_state": 170,
+                "cluster_std": [1.0, 2.5, 0.5]
+                },
+            "setup_kwargs": {
+                "transform_func": helper_base.compute_neighbours,
+                "transform_args": (0.18,),
+                "preparation_hook": hooks.prepare_neighbourhoods,
+                "recipe": cases.neighbours_recipe
+                }
+            }
+        )
+    ]
+
+run_list = (
+    helper_base.Run(
+        run_name,
+        cases.gen_bm_units_cnnclustering_complete(**kwargs),
+    )
+    for run_name, kwargs in raw_run_list
 )
 
 if __name__ == "__main__":
-    for (run_type, args, kwargs) in run_list:
-        run = run_type(*args, **kwargs)
+    for run in run_list:
 
-        full_run_name = f"{run.run_name}_run_{run.case_name}"
-        report_file = report_dir / f"{full_run_name}_raw.json"
+        report_file = report_dir / f"{run.run_name}_raw.json"
 
-        RUN_TIMINGS_MAP[full_run_name] = {}
-
-        helper_base.collect_timings(
-            run_arguments_list=run.run_argument_list,
-            timings=RUN_TIMINGS_MAP[full_run_name],
-            **run.function_map
-        )
+        run.collect()
 
         with open(report_file, "w") as fp:
-            json.dump(RUN_TIMINGS_MAP[full_run_name], fp, indent=4)
+            json.dump(run.timings, fp, indent=4)
