@@ -168,73 +168,61 @@ def gen_bm_units_cnnclustering__fit(
 
 
 def gen_bm_units_cnnclustering_complete(
-        r, c, d, n_list,
+        r_list, c_list, d_list, n_list,
         gen_func, gen_kwargs=None,
         transform_func=None, transform_args=None, transform_kwargs=None,
         setup_args=None, setup_kwargs=None):
     """Case generation function to vary data set size"""
 
-    bm_units = (
-        helper_base.BMUnit(
+    if not isinstance(r_list, list):
+        r_list = [r_list]
+
+    if not isinstance(c_list, list):
+        c_list = [c_list]
+
+    if not isinstance(d_list, list):
+        d_list = [d_list]
+
+    if not isinstance(n_list, list):
+        n_list = [n_list]
+
+    parameter_length = max(len(_list) for _list in [r_list, c_list, d_list, n_list])
+
+    if len(r_list) != parameter_length:
+        r_list = r_list[:1] * parameter_length
+
+    if len(c_list) != parameter_length:
+        c_list = c_list[:1] * parameter_length
+
+    if len(d_list) != parameter_length:
+        d_list = d_list[:1] * parameter_length
+
+    if len(n_list) != parameter_length:
+        n_list = n_list[:1] * parameter_length
+
+    for index, n in enumerate(n_list):
+
+        processed_setup_args = []
+        for argument in setup_args:
+            if not isinstance(argument, str):
+                processed_setup_args.append(argument)
+                continue
+
+            if argument == "<r>":
+                processed_setup_args.append(r_list[index])
+                continue
+
+        bm_unit = helper_base.BMUnit(
             id=str(n),
-            gen_func=gen_func, gen_args=((n, d),), gen_kwargs=gen_kwargs,
+            gen_func=gen_func, gen_args=((n, d_list[index]),), gen_kwargs=gen_kwargs,
             transform_func=transform_func, transform_args=transform_args,
             transform_kwargs=transform_kwargs,
             setup_func=setup_commonnn_clustering_complete,
-            setup_args=setup_args, setup_kwargs=setup_kwargs,
-            timed_args=(r, c), timed_kwargs={
+            setup_args=tuple(processed_setup_args), setup_kwargs=setup_kwargs,
+            timed_args=(r_list[index], c_list[index]), timed_kwargs={
                 "record": False, "record_time": False,
                 "info": False, "sort_by_size": False
                 }
             )
-        for n in n_list
-    )
 
-    return bm_units
-
-
-def gen_run_argument_list_cnnclustering_complete(
-        r, c, n_list,
-        gen_kwargs=None,
-        transform_args=None, transform_kwargs=None,
-        setup_args=None, setup_kwargs=None):
-
-    if gen_kwargs is None:
-        gen_kwargs = {}
-
-    if transform_args is None:
-        transform_args = ()
-
-    if transform_kwargs is None:
-        transform_kwargs = {}
-
-    if setup_args is None:
-        setup_args = ()
-
-    if setup_kwargs is None:
-        setup_kwargs = {}
-
-    run_argument_list = []
-    for n in n_list:
-        run_argument_list.append(
-            {
-                "id": str(n),
-                "gen": (
-                    ((n, 2),), gen_kwargs
-                ),
-                "transform": (
-                    transform_args, transform_kwargs
-                ),
-                "setup": (
-                    setup_args, setup_kwargs
-                ),
-                "timed": (
-                    (r, c), {
-                        "record": False, "record_time": False,
-                        "info": False, "sort_by_size": False
-                        }
-                ),
-            }
-        )
-
-    return run_argument_list
+        yield bm_unit

@@ -357,3 +357,22 @@ class BMUnit:
         if timed_kwargs is None:
             timed_kwargs = {}
         self.timed_kwargs = timed_kwargs
+
+    def __str__(self):
+        return_str = (
+            "BMUnit\n"
+            f"    id={self.id}\n"
+            f"    gen_func={self.gen_func.__name__ if self.gen_func is not None else None}\n"
+            f"        gen_args={self.gen_args}\n"
+            f"        gen_kwargs={self.gen_kwargs}\n"
+            f"    transform_func={self.transform_func.__name__ if self.transform_func is not None else None}\n"
+            f"        transform_args={self.transform_args}\n"
+            f"        transform_kwargs={self.transform_kwargs}\n"
+            f"    setup_func={self.setup_func.__name__ if self.setup_func is not None else None}\n"
+            f"        setup_args={self.setup_args}\n"
+            f"        setup_kwargs={self.setup_kwargs}\n"
+            f"    timed_args={self.timed_args}\n"
+            f"    timed_kwargs={self.timed_kwargs}\n"
+        )
+
+        return return_str
