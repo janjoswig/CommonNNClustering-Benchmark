@@ -1,3 +1,5 @@
+from functools import partial
+
 import numpy as np
 
 from cnnclustering import cluster, hooks
@@ -202,23 +204,27 @@ def gen_bm_units_cnnclustering_complete(
 
     for index, n in enumerate(n_list):
 
-        processed_setup_args = []
-        for argument in setup_args:
-            if not isinstance(argument, str):
-                processed_setup_args.append(argument)
-                continue
-
-            if argument == "<r>":
-                processed_setup_args.append(r_list[index])
-                continue
+        sub = partial(
+            substitute_placeholders,
+            placeholder_map={
+                "<r>": r_list[index],
+                "<c>": c_list[index],
+                "<d>": d_list[index],
+                "<n>": n_list[index],
+                }
+            )
 
         bm_unit = helper_base.BMUnit(
             id=str(n),
-            gen_func=gen_func, gen_args=((n, d_list[index]),), gen_kwargs=gen_kwargs,
-            transform_func=transform_func, transform_args=transform_args,
-            transform_kwargs=transform_kwargs,
+            gen_func=gen_func,
+            gen_args=((n, d_list[index]),),
+            gen_kwargs=sub(gen_kwargs),
+            transform_func=transform_func,
+            transform_args=sub(transform_args),
+            transform_kwargs=sub(transform_kwargs),
             setup_func=setup_commonnn_clustering_complete,
-            setup_args=tuple(processed_setup_args), setup_kwargs=setup_kwargs,
+            setup_args=sub(setup_args),
+            setup_kwargs=sub(setup_kwargs),
             timed_args=(r_list[index], c_list[index]), timed_kwargs={
                 "record": False, "record_time": False,
                 "info": False, "sort_by_size": False
@@ -226,3 +232,27 @@ def gen_bm_units_cnnclustering_complete(
             )
 
         yield bm_unit
+
+
+def substitute_placeholders(value, placeholder_map):
+
+    if isinstance(value, str):
+        return placeholder_map.get(value, value)
+
+    if isinstance(value, tuple):
+        # args
+        processed_args = []
+        for arg in value:
+            processed_args.append(substitute_placeholders(arg, placeholder_map))
+
+        return tuple(processed_args)
+
+    if isinstance(value, dict):
+        # kwargs
+        processed_kwargs = {}
+        for kw, v in value.items():
+            processed_kwargs[kw] = substitute_placeholders(v, placeholder_map)
+
+        return processed_kwargs
+
+    return value

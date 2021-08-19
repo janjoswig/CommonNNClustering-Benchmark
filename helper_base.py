@@ -307,13 +307,26 @@ class Run:
         self.bm_units = bm_units
         self.timings = {}
 
-    def collect(self, repeats=10):
+    # @profile
+    def collect(self, repeats=10, v=False):
         assert self.bm_units is not None
 
         for unit in self.bm_units:
+            if v:
+                print(f"Unit: {unit.id}")
+
             self.timings[unit.id] = time_unit(
                 unit, repeats=repeats
                 )
+
+    def __str__(self):
+        return_str = (
+            "Run\n"
+            f"    {self.run_name}\n"
+            f"    {self.bm_units}\n"
+        )
+
+        return return_str
 
 
 class BMUnit:
