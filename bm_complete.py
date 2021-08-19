@@ -13,9 +13,9 @@ report_dir = pathlib.Path("reports/curta/cnnclustering_fit/complete")
 if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
-n_points_list = [500 * 2**x for x in range(10)]
-r_list = [0.2 * 0.95**x for x in range(10)]
-c_list = [int(2 * 2**x) for x in range(10)]
+n_points_list = [500 * 2**x for x in range(9)]
+r_list = [0.2 * 0.95**x for x in range(9)]
+c_list = [int(2 * 2**x) for x in range(9)]
 
 raw_run_list = [
     (
