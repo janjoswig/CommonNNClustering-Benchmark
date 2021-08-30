@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import pathlib
 import timeit
@@ -9,6 +10,8 @@ from sklearn.neighbors import KDTree
 from sklearn.preprocessing import StandardScaler
 
 from cnnclustering import cluster
+
+import helper_timeit
 
 
 def indent_at_parens(s):
@@ -185,7 +188,7 @@ def scale(x, y, newx, f=growth, **kwargs):
     except RuntimeError as error:
         print(error)
     else:
-        return growth(newx, *popt), (popt, perr)
+        return f(newx, *popt), (popt, perr)
 
 
 def collect_timings(
@@ -259,7 +262,7 @@ def time_unit(bm_unit, repeats=10):
         bm_unit: A single instance of :obj:`BMUnit`
 
     Keyword args:
-        repeat: How many time the timing should be repeated
+        repeat: How many times the timing should be repeated
     """
 
     if bm_unit.gen_func is not None:
@@ -305,7 +308,43 @@ class Run:
             bm_units=None):
         self.run_name = run_name
         self.bm_units = bm_units
-        self.timings = {}
+        self.reset()
+
+    def reset(self):
+        self._timings = {}
+
+    @property
+    def timings(self):
+        return {
+            k: helper_timeit.raw_to_timeitresult(v)
+            if not isinstance(v, str) else v
+            for k, v in self._timings.items()
+            }
+
+    def scaling(self, id_to_n=None, mask=None, **kwargs):
+
+        if id_to_n is None:
+            id_to_n = lambda x: int(x)
+
+        if mask is None:
+            mask = set()
+
+        x, y = zip(
+            *(
+                (id_to_n(k), v.best)
+                for k, v in self.timings.items()
+                if (isinstance(v, helper_timeit.TimeitResult)) & (k not in mask)
+                )
+            )
+        x = np.asarray(x)
+        y = np.asarray(y)
+        sorti = np.argsort(x)
+        x = x[sorti]
+        y = y[sorti]
+
+        newx = np.linspace(x[0], x[-1], 100)
+        fity, (popt, perr) = scale(x, y, newx, **kwargs)
+        return (newx, fity), (popt, perr)
 
     # @profile
     def collect(self, repeats=10, v=False):
@@ -315,9 +354,12 @@ class Run:
             if v:
                 print(f"Unit: {unit.id}")
 
-            self.timings[unit.id] = time_unit(
+            self._timings[unit.id] = time_unit(
                 unit, repeats=repeats
                 )
+
+            if v:
+                print(f"    finished {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
 
     def __str__(self):
         return_str = (
@@ -389,3 +431,6 @@ class BMUnit:
         )
 
         return return_str
+
+    def __repr__(self):
+        return f"{type(self).__name__}(id={self.id})"
