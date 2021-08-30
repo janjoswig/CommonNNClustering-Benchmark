@@ -147,26 +147,69 @@ neighbours_sorted_recipe = {
 
 
 def gen_bm_units_cnnclustering__fit(
-        r, c, d, n_list,
+        r_list, c_list, d_list, n_list,
         gen_func, gen_kwargs=None,
         transform_func=None, transform_args=None, transform_kwargs=None,
         setup_args=None, setup_kwargs=None):
     """Case generation function to vary data set size"""
 
-    bm_units = (
-        helper_base.BMUnit(
-            id=str(n),
-            gen_func=gen_func, gen_args=((n, d),), gen_kwargs=gen_kwargs,
-            transform_func=transform_func, transform_args=transform_args,
-            transform_kwargs=transform_kwargs,
-            setup_func=setup_commonnn_clustering__fit,
-            setup_args=setup_args, setup_kwargs=setup_kwargs,
-            timed_args=(_types.ClusterParameters(r, c),), timed_kwargs={}
-            )
-        for n in n_list
-    )
+    if not isinstance(r_list, list):
+        r_list = [r_list]
 
-    return bm_units
+    if not isinstance(c_list, list):
+        c_list = [c_list]
+
+    if not isinstance(d_list, list):
+        d_list = [d_list]
+
+    if not isinstance(n_list, list):
+        n_list = [n_list]
+
+    parameter_length = max(len(_list) for _list in [r_list, c_list, d_list, n_list])
+
+    if len(r_list) != parameter_length:
+        r_list = r_list[:1] * parameter_length
+
+    if len(c_list) != parameter_length:
+        c_list = c_list[:1] * parameter_length
+
+    if len(d_list) != parameter_length:
+        d_list = d_list[:1] * parameter_length
+
+    if len(n_list) != parameter_length:
+        n_list = n_list[:1] * parameter_length
+
+    for index, n in enumerate(n_list):
+
+        sub = partial(
+            substitute_placeholders,
+            placeholder_map={
+                "<r>": r_list[index],
+                "<c>": c_list[index],
+                "<d>": d_list[index],
+                "<n>": n_list[index],
+                }
+            )
+
+        bm_unit = helper_base.BMUnit(
+            id=str(n),
+            gen_func=gen_func,
+            gen_args=((n, d_list[index]),),
+            gen_kwargs=sub(gen_kwargs),
+            transform_func=transform_func,
+            transform_args=sub(transform_args),
+            transform_kwargs=sub(transform_kwargs),
+            setup_func=setup_commonnn_clustering__fit,
+            setup_args=sub(setup_args),
+            setup_kwargs=sub(setup_kwargs),
+            timed_args=(_types.ClusterParameters(r_list[index], c_list[index]),),
+            timed_kwargs={
+                "record": False, "record_time": False,
+                "info": False, "sort_by_size": False
+                }
+            )
+
+        yield bm_unit
 
 
 def gen_bm_units_cnnclustering_complete(
