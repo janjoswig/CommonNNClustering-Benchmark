@@ -36,7 +36,7 @@ raw_run_list = [
     (
         "varied_b_a_scale_r",
         {
-            "r_list": r_list, "c_list": c_list, "d_list": 2,
+            "r_list": r_list[:-2], "c_list": c_list[:-2], "d_list": 2,
             "n_list": n_points_list[:-2],
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {
@@ -52,7 +52,7 @@ raw_run_list = [
     (
         "varied_d_a_scale_r",
         {
-            "r_list": r_list, "c_list": c_list, "d_list": 2,
+            "r_list": r_list[:-1], "c_list": c_list[:-1], "d_list": 2,
             "n_list": n_points_list[:-1],
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {
@@ -104,4 +104,4 @@ if __name__ == "__main__":
         run.collect(v=True)
 
         with open(report_file, "w") as fp:
-            json.dump(run.timings, fp, indent=4)
+            json.dump(run._timings, fp, indent=4)

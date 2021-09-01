@@ -24,10 +24,10 @@ raw_run_list = [
             "r_list": r_list, "c_list": c_list, "d_list": 2,
             "n_list": n_points_list,
             "gen_func": helper_base.gen_no_structure_points,
+            "transform_func": helper_base.compute_neighbours,
+            "transform_args": ("<r>",),
+            "transform_kwargs": {"sort": True},
             "setup_kwargs": {
-                "transform_func": helper_base.compute_neighbours,
-                "transform_args": ("<r>",),
-                "transform_kwargs": {"sort": True},
                 "preparation_hook": hooks.prepare_neighbourhoods,
                 "recipe": cases.neighbours_recipe
                 }
@@ -51,4 +51,4 @@ if __name__ == "__main__":
         run.collect(v=True)
 
         with open(report_file, "w") as fp:
-            json.dump(run.timings, fp, indent=4)
+            json.dump(run._timings, fp, indent=4)

@@ -203,10 +203,7 @@ def gen_bm_units_cnnclustering__fit(
             setup_args=sub(setup_args),
             setup_kwargs=sub(setup_kwargs),
             timed_args=(_types.ClusterParameters(r_list[index], c_list[index]),),
-            timed_kwargs={
-                "record": False, "record_time": False,
-                "info": False, "sort_by_size": False
-                }
+            timed_kwargs={}
             )
 
         yield bm_unit
