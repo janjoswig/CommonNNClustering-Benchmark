@@ -19,23 +19,20 @@ c_list = [int(2 * 2**x) for x in range(10)]
 
 raw_run_list = [
     (
-        "varied_c_a_scale_r",
+        "varied_a_a_scale_r",
         {
             "r_list": r_list, "c_list": c_list, "d_list": 2,
-            "n_list": n_points_list[:-1],
+            "n_list": n_points_list,
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {
                 "random_state": 170,
                 "cluster_std": [1.0, 2.5, 0.5]
                 },
             "setup_kwargs": {
-                "transform_func": helper_base.compute_neighbours,
-                "transform_args": ("<r>",),
-                "preparation_hook": hooks.prepare_neighbourhoods,
-                "recipe": cases.neighbours_recipe
+                "recipe": cases.default_recipe
                 }
             }
-        )
+        ),
     ]
 
 run_list = (
