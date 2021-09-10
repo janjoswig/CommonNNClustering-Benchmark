@@ -347,7 +347,12 @@ class Run:
         return (newx, fity), (popt, perr)
 
     # @profile
-    def collect(self, repeats=10, v=False):
+    def collect(
+            self,
+            repeats=10,
+            report_file=None,
+            v=False):
+
         assert self.bm_units is not None
 
         for unit in self.bm_units:
@@ -358,8 +363,15 @@ class Run:
                 unit, repeats=repeats
                 )
 
+            if report_file is not None:
+                self.save_timings(report_file)
+
             if v:
                 print(f"    finished {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
+
+    def save_timings(self, report_file):
+        with open(report_file, "w") as fp:
+            json.dump(self._timings, fp, indent=4)
 
     def __str__(self):
         return_str = (
