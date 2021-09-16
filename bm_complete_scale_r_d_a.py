@@ -52,7 +52,4 @@ if __name__ == "__main__":
 
         report_file = report_dir / f"{run.run_name}_raw.json"
 
-        run.collect(v=True)
-
-        with open(report_file, "w") as fp:
-            json.dump(run._timings, fp, indent=4)
+        run.collect(v=True, report_file=report_file)

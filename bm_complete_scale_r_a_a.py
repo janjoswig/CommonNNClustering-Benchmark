@@ -21,8 +21,8 @@ raw_run_list = [
     (
         "varied_a_a_scale_r",
         {
-            "r_list": r_list, "c_list": c_list, "d_list": 2,
-            "n_list": n_points_list,
+            "r_list": r_list[-2:], "c_list": c_list[-2:], "d_list": 2,
+            "n_list": n_points_list[-2:],
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {
                 "random_state": 170,
@@ -48,7 +48,4 @@ if __name__ == "__main__":
 
         report_file = report_dir / f"{run.run_name}_raw.json"
 
-        run.collect(v=True)
-
-        with open(report_file, "w") as fp:
-            json.dump(run._timings, fp, indent=4)
+        run.collect(v=True, report_file=report_file)
