@@ -1,5 +1,9 @@
 import json
 import pathlib
+import sys
+
+repo_dir = pathlib.Path("/home/janjoswig/repo/CommonNNClustering/docsrc/benchmark")
+sys.path.insert(0, str(repo_dir))
 
 from sklearn.metrics import pairwise_distances
 
@@ -9,7 +13,7 @@ import helper_base
 import cnnclustering_fit_cases as cases
 
 
-report_dir = pathlib.Path("reports/curta/cnnclustering_fit/complete")
+report_dir = repo_dir / "reports/curta/cnnclustering_fit/complete"
 if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
