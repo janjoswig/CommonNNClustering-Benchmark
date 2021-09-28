@@ -1,6 +1,12 @@
 import pathlib
+import sys
 
 from sklearn.metrics import pairwise_distances
+
+helper_dir = pathlib.Path(__file__).parent / ".."
+sys.path.insert(0, f"{helper_dir.absolute()}")
+
+print(sys.path)
 
 import helper_base
 import cnnclustering_fit_cases as cases
