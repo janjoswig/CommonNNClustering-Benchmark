@@ -1,4 +1,5 @@
 from datetime import datetime
+import gc
 import json
 import pathlib
 import timeit
@@ -296,6 +297,8 @@ def time_unit(bm_unit, repeats=10):
             )
 
         timeit_results.append(o)
+
+        gc.collect()
 
     return timeit_results
 
