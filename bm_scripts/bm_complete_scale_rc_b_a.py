@@ -16,25 +16,22 @@ report_dir = pathlib.Path("../reports/curta/cnnclustering_fit/complete")
 if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
-start = 0  # inclusive
+start = 7  # inclusive
 stop = 8   # exclusive
 
 part = 2
 
-n_points_list = [500 * 2**x for x in range(8)]
-r_list = [0.2 * 0.9**x for x in range(8)]
-# c_list = [int(2 * 2**x) for x in range(10)]
-c = 50
-d = 2
-
+n_points_list = [500 * 2**x for x in range(10)]
+r_list = [0.2 * 0.95**x for x in range(10)]
+c_list = [int(2 * 2**x) for x in range(10)]
 
 raw_run_list = [
     (
         "varied_b_a_scale_r",
         {
             "r_list": r_list[start:stop],
-            "c_list": c,
-            "d_list": d,
+            "c_list": c_list[start:stop],
+            "d_list": 2,
             "n_list": n_points_list[start:stop],
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {

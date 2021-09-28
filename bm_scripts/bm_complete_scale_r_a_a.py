@@ -14,15 +14,19 @@ if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
 n_points_list = [500 * 2**x for x in range(10)]
-r_list = [0.2 * 0.95**x for x in range(10)]
-c_list = [int(2 * 2**x) for x in range(10)]
+r_list = [0.2 * 0.9**x for x in range(10)]
+# c_list = [int(2 * 2**x) for x in range(10)]
+
+c = 50
+d = 2
+
 
 raw_run_list = [
     (
         "varied_a_a_scale_r",
         {
-            "r_list": r_list[-2:], "c_list": c_list[-2:], "d_list": 2,
-            "n_list": n_points_list[-2:],
+            "r_list": r_list, "c_list": c, "d_list": d,
+            "n_list": n_points_list,
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {
                 "random_state": 170,
