@@ -24,12 +24,17 @@ r_list = [0.2 * 0.9**x for x in range(10)]
 c = 50
 d = 2
 
+start = 9
+end = 10
+
+part = 2
+
 raw_run_list = [
     (
-	"varied_d_a_scale_r",
+	f"varied_c_a_scale_r_{part}",
         {
-            "r_list": r_list, "c_list": c, "d_list": 2,
-            "n_list": n_points_list,
+            "r_list": r_list[start:end], "c_list": c, "d_list": 2,
+            "n_list": n_points_list[start:end],
             "gen_func": helper_base.gen_blobs_points,
             "gen_kwargs": {
                 "random_state": 170,
@@ -59,4 +64,4 @@ if __name__ == "__main__":
 
         report_file = report_dir / f"{run.run_name}_raw.json"
 
-        run.collect(v=True, report_file=report_file)
+        run.collect(v=True, report_file=report_file, repeats=3)
