@@ -25,7 +25,7 @@ n_points_list = [500 * 2**x for x in range(10)]
 r_list = [0.2 * 0.9**x for x in range(10)]
 # c_list = [int(2 * 2**x) for x in range(10)]
 c = 50
-d = 2
+d = 3
 
 
 raw_run_list = [
@@ -64,5 +64,9 @@ if __name__ == "__main__":
 
         run.collect(
             v=True, report_file=report_file,
+<<<<<<< HEAD
             repeats=5
+=======
+            repeats=2
+>>>>>>> 3c885cadf8a86ff901c89249232740b6e86a1329
             )

@@ -13,7 +13,7 @@ import helper_base
 import cnnclustering_fit_cases as cases
 
 
-report_dir = repo_dir / "reports/curta/cnnclustering_fit/complete"
+report_dir = repo_dir / "reports/qcm07/cnnclustering_fit/complete"
 if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
@@ -64,4 +64,8 @@ if __name__ == "__main__":
 
         report_file = report_dir / f"{run.run_name}_raw.json"
 
-        run.collect(v=True, report_file=report_file, repeats=3)
+        run.collect(
+            v=True,
+            report_file=report_file,
+            repeats=1
+            )
