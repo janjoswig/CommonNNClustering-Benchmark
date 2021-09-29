@@ -12,20 +12,20 @@ import helper_base
 import cnnclustering_fit_cases as cases
 
 
-report_dir = pathlib.Path("../reports/curta/cnnclustering_fit/complete")
+report_dir = pathlib.Path("../reports/qcm07/cnnclustering_fit/complete")
 if not report_dir.is_dir():
     report_dir.mkdir(parents=True, exist_ok=True)
 
-start = 0  # inclusive
-stop = 8   # exclusive
+start = 8  # inclusive
+stop = 10  # exclusive
 
 part = 2
 
-n_points_list = [500 * 2**x for x in range(8)]
-r_list = [0.2 * 0.9**x for x in range(8)]
+n_points_list = [500 * 2**x for x in range(10)]
+r_list = [0.2 * 0.9**x for x in range(10)]
 # c_list = [int(2 * 2**x) for x in range(10)]
 c = 50
-d = 2
+d = 3
 
 
 raw_run_list = [
@@ -62,4 +62,7 @@ if __name__ == "__main__":
 
         report_file = report_dir / f"{run.run_name}_raw_{part}.json"
 
-        run.collect(v=True, report_file=report_file)
+        run.collect(
+            v=True, report_file=report_file,
+            repeats=2
+            )

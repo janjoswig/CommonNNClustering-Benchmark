@@ -1,51 +1,72 @@
-import json
+import argparse
+import importlib
 import pathlib
 
-from sklearn.metrics import pairwise_distances
-
-from cnnclustering import hooks
-
-import helper_base
-import cnnclustering_fit_cases as cases
-
-
-report_dir = pathlib.Path("reports/curta/cnnclustering_fit")
-if not report_dir.is_dir():
-    report_dir.mkdir(parents=True, exist_ok=True)
-
-n_points_list = [500 * 2**x for x in range(10)]
-r_list = 0.25
-c_list = 0
-
-raw_run_list = [
-    (
-        "no_structure_e_a",
-        {
-            "r_list": r_list, "c_list": c_list, "d_list": 2,
-            "n_list": n_points_list,
-            "gen_func": helper_base.gen_no_structure_points,
-            "transform_func": helper_base.compute_neighbours,
-            "transform_args": ("<r>",),
-            "transform_kwargs": {"sort": True},
-            "setup_kwargs": {
-                "preparation_hook": hooks.prepare_neighbourhoods,
-                "recipe": cases.neighbours_recipe
-                }
-            }
-        ),
-]
-
-run_list = (
-    helper_base.Run(
-        run_name,
-        cases.gen_bm_units_cnnclustering__fit(**kwargs),
-    )
-    for run_name, kwargs in raw_run_list
-)
 
 if __name__ == "__main__":
-    for run in run_list:
+    parser = argparse.ArgumentParser(description='Execute a benchmark')
+    # parser.add_argument(
+    #     "-i", "--imports",
+    #     type=str,
+    #     nargs="+",
+    #     default=["sklearn.metrics"],
+    #     help="List of modules to import"
+    #     )
+    parser.add_argument(
+        "-runs", "--runs",
+        type=str,
+        required=True,
+        help="The name of a module that defines a run list"
+        )
+    parser.add_argument(
+        "-m", "--machine",
+        type=str,
+        default="curta",
+        help="Machine identifier"
+        )
+    parser.add_argument(
+        "-r", "--repeats",
+        type=int,
+        default=10,
+        help="Number of timings per benchmark unit"
+        )
+    parser.add_argument(
+        "-p", "--part",
+        type=str,
+        default="1",
+        help="Report part"
+        )
+    parser.add_argument(
+        "-b", "--black_list",
+        type=int,
+        nargs="+",
+        default=None,
+        help="Run indices not to consider for execution"
+        )
 
-        report_file = report_dir / f"{run.run_name}_raw.json"
+    args = parser.parse_args()
 
-        run.collect(v=True, report_file=report_file)
+    runs = importlib.import_module(str(args.runs))
+
+    if args.black_list is None:
+        black_list = set()
+    else:
+        black_list = set(int(x) for x in args.black_list)
+
+    repo_dir = pathlib.Path(__file__).absolute().parent.parent
+    report_dir = repo_dir / f"reports/{args.machine}/{runs.runs_report_dir}"
+    if not report_dir.is_dir():
+        report_dir.mkdir(parents=True, exist_ok=True)
+
+    for i, run in enumerate(runs.run_list):
+        if i in black_list:
+            continue
+
+        report_file = report_dir / f"{run.run_name}_raw_{args.part}.json"
+        print(report_file.absolute())
+
+        run.collect(
+            v=True,
+            report_file=report_file,
+            repeats=args.repeats
+            )
