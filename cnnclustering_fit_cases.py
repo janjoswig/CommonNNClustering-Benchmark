@@ -2,7 +2,7 @@ from functools import partial
 
 import numpy as np
 
-from cnnclustering import cluster, hooks
+from cnnclustering import cluster, recipes
 from cnnclustering import _fit, _types, _primitive_types
 
 import helper_base
@@ -11,7 +11,7 @@ import helper_base
 def setup_commonnn_clustering__fit(
         data,
         registered_recipe_key="None",
-        preparation_hook=hooks.prepare_pass,
+        preparation_hook=recipes.prepare_pass,
         recipe=None):
     """Prepare benchmark of :meth:`cnnclustering.cluster.Clustering._fit`"""
 
@@ -38,7 +38,7 @@ def setup_commonnn_clustering__fit(
 def setup_commonnn_clustering_fit(
         data,
         registered_recipe_key="None",
-        preparation_hook=hooks.prepare_pass,
+        preparation_hook=recipes.prepare_pass,
         recipe=None):
     """Prepare benchmark of :meth:`cnnclustering.cluster.Clustering.fit`"""
 
@@ -62,7 +62,7 @@ def setup_commonnn_clustering_complete(
         transform_args=None,
         transform_kwargs=None,
         registered_recipe_key="None",
-        preparation_hook=hooks.prepare_pass,
+        preparation_hook=recipes.prepare_pass,
         recipe=None):
     """Prepare benchmark of :meth:`cnnclustering.cluster.Clustering._fit`
 

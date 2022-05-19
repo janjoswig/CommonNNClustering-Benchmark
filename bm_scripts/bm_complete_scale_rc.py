@@ -3,7 +3,7 @@ import pathlib
 
 from sklearn.metrics import pairwise_distances
 
-from cnnclustering import hooks
+from cnnclustering import recipes
 
 import helper_base
 import cnnclustering_fit_cases as cases
@@ -31,7 +31,7 @@ raw_run_list = [
             "setup_kwargs": {
                 "transform_func": helper_base.compute_neighbours,
                 "transform_args": ("<r>",),
-                "preparation_hook": hooks.prepare_neighbourhoods,
+                "preparation_hook": recipes.prepare_neighbourhoods,
                 "recipe": cases.neighbours_recipe
                 }
             }

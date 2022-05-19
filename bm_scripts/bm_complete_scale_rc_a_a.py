@@ -3,7 +3,7 @@ import pathlib
 
 from sklearn.metrics import pairwise_distances
 
-from cnnclustering import hooks
+from cnnclustering import recipes
 
 import helper_base
 import cnnclustering_fit_cases as cases
