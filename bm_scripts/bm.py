@@ -5,18 +5,11 @@ import pathlib
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Execute a benchmark')
-    # parser.add_argument(
-    #     "-i", "--imports",
-    #     type=str,
-    #     nargs="+",
-    #     default=["sklearn.metrics"],
-    #     help="List of modules to import"
-    #     )
     parser.add_argument(
         "-runs", "--runs",
         type=str,
         required=True,
-        help="The name of a module that defines a run list"
+        help="The name (path) of a module that defines a run list"
         )
     parser.add_argument(
         "-m", "--machine",
@@ -33,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-p", "--part",
         type=str,
-        default="1",
+        default="",
         help="Report part"
         )
     parser.add_argument(
@@ -42,6 +35,11 @@ if __name__ == "__main__":
         nargs="+",
         default=None,
         help="Run indices not to consider for execution"
+        )
+    parser.add_argument(
+        "-profile", "--profile",
+        action="store_true",
+        help="Profile with scalene instead of timings"
         )
 
     args = parser.parse_args()
@@ -62,11 +60,14 @@ if __name__ == "__main__":
         if i in black_list:
             continue
 
-        report_file = report_dir / f"{run.run_name}_raw_{args.part}.json"
-        print(report_file.absolute())
+        if args.profile:
+            run.profile(v=True)
+        else:
+            report_file = report_dir / f"{run.run_name}_raw{args.part}.json"
+            print("Saving timings report to: ", report_file.absolute())
 
-        run.collect(
-            v=True,
-            report_file=report_file,
-            repeats=args.repeats
-            )
+            run.collect(
+                v=True,
+                report_file=report_file,
+                repeats=args.repeats
+                )

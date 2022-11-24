@@ -1,0 +1,125 @@
+{
+    "elapsed_time_sec": 142.8747546672821,
+    "files": {
+        "no_structure_points_commonnn__fit.py": {
+            "functions": [],
+            "leaks": {},
+            "lines": [
+                {
+                    "line": "from commonnn import _types\n",
+                    "lineno": 8,
+                    "memory_samples": [
+                        [
+                            2004941,
+                            9.047563996541259
+                        ],
+                        [
+                            2055453,
+                            17.708159388386413
+                        ],
+                        [
+                            2114534,
+                            26.635597174391695
+                        ],
+                        [
+                            2173740,
+                            35.746691090615776
+                        ]
+                    ],
+                    "n_avg_mb": 0.0,
+                    "n_copy_mb_s": 0.0,
+                    "n_cpu_percent_c": 0.0,
+                    "n_cpu_percent_python": 0.0,
+                    "n_gpu_avg_memory_mb": 0.0,
+                    "n_gpu_peak_memory_mb": 0.0,
+                    "n_gpu_percent": 0,
+                    "n_growth_mb": 38.71727466583252,
+                    "n_malloc_mb": 38.71727466583252,
+                    "n_mallocs": 0,
+                    "n_peak_mb": 38.71727466583252,
+                    "n_python_fraction": 0.9667500618026921,
+                    "n_sys_percent": 0.0,
+                    "n_usage_fraction": 0.4491267744407801
+                },
+                {
+                    "line": "from commonnnbm import base\n",
+                    "lineno": 9,
+                    "memory_samples": [
+                        [
+                            2208964,
+                            40.20800927799851
+                        ],
+                        [
+                            2293055,
+                            49.090022670798696
+                        ],
+                        [
+                            2353535,
+                            58.004265076135994
+                        ],
+                        [
+                            2413164,
+                            67.06347689681887
+                        ],
+                        [
+                            2477795,
+                            75.93601702659434
+                        ]
+                    ],
+                    "n_avg_mb": 0.0,
+                    "n_copy_mb_s": 0.0,
+                    "n_cpu_percent_c": 0.0,
+                    "n_cpu_percent_python": 0.0,
+                    "n_gpu_avg_memory_mb": 0.0,
+                    "n_gpu_peak_memory_mb": 0.0,
+                    "n_gpu_percent": 0,
+                    "n_growth_mb": 43.018757820129395,
+                    "n_malloc_mb": 45.51878833770752,
+                    "n_mallocs": 0,
+                    "n_peak_mb": 43.018757820129395,
+                    "n_python_fraction": 0.9832342688669697,
+                    "n_sys_percent": 0.0,
+                    "n_usage_fraction": 0.5280254552784542
+                },
+                {
+                    "line": "        base.profile_unit(unit)\n",
+                    "lineno": 100,
+                    "memory_samples": [
+                        [
+                            2543532,
+                            83.7219936001064
+                        ]
+                    ],
+                    "n_avg_mb": 0.0,
+                    "n_copy_mb_s": 0.0,
+                    "n_cpu_percent_c": 99.98214696388779,
+                    "n_cpu_percent_python": 0.013999695493094697,
+                    "n_gpu_avg_memory_mb": 0.0,
+                    "n_gpu_peak_memory_mb": 0.0,
+                    "n_gpu_percent": 0,
+                    "n_growth_mb": 1.9696073532104492,
+                    "n_malloc_mb": 1.9696073532104492,
+                    "n_mallocs": 0,
+                    "n_peak_mb": 1.9696073532104492,
+                    "n_python_fraction": 0.769723,
+                    "n_sys_percent": 0.0038533406191421106,
+                    "n_usage_fraction": 0.02284777028076571
+                }
+            ],
+            "percent_cpu_time": 100.0
+        }
+    },
+    "gpu": false,
+    "growth_rate": 97.20924684188347,
+    "max_footprint_fname": "no_structure_points_commonnn__fit.py",
+    "max_footprint_lineno": 100,
+    "max_footprint_mb": 83.79988288879395,
+    "memory": true,
+    "program": "no_structure_points_commonnn__fit.py",
+    "samples": [
+        [
+            1871419,
+            81.27742397471039
+        ]
+    ]
+}
